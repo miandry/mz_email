@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains mz_email.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function mz_email_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the mz_email module.
+    case 'help.page.mz_email':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Email Manager') . '</p>';
+      return $output;
+
+    default:
+  }
+}

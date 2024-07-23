@@ -1,0 +1,7 @@
+mz_email.s_m_t_p_form:
+  path: '/admin/mz_email/smtp'
+  defaults:
+    _form: '\Drupal\mz_email\Form\SMTPForm'
+    _title: 'SMTPForm'
+  requirements:
+    _access: 'TRUE'
