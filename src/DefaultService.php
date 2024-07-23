@@ -25,6 +25,7 @@ class DefaultService {
         \Drupal::messenger()->addMessage(t('Email simple sent successfully.'));
       } else {
         \Drupal::messenger()->addMessage(t('There was a problem sending your email simple.'), 'error');
+        return false;
       }
       return true ;
     }
@@ -34,7 +35,6 @@ class DefaultService {
     }
     if (class_exists('PHPMailer\PHPMailer\PHPMailer')) {
        
-
         $mail = new \PHPMailer\PHPMailer\PHPMailer();       
         // Set mailer to use SMTP
         $mail->isSMTP();
@@ -75,9 +75,11 @@ class DefaultService {
             \Drupal::logger('mz_email')->error( $message);
             $message =  'Mailer Error: ' . $mail->ErrorInfo;
             \Drupal::logger('mz_email')->error( $message);
+            return false ;
         } else {
             \Drupal::logger('mz_email')->info('Message has been sent');
             \Drupal::messenger()->addMessage('Email Message has been sent');  
+            return true ;
         } 
 
     } else {
@@ -85,7 +87,9 @@ class DefaultService {
         // Handle the situation accordingly
         $message =  'PHPMailer library is not available.';
         \Drupal::logger('mz_email')->error($message);
+        return false ;
     }
+    return false ;
 }
 function verificationMail($email){
     list($user, $domain) = explode('@', $email);

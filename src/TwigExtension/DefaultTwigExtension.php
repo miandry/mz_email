@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\mz_crud\TwigExtension;
+namespace Drupal\mz_email\TwigExtension;
 
 
 /**
