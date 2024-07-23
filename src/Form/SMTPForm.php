@@ -147,6 +147,7 @@ class SMTPForm extends ConfigFormBase {
       ->set('username', $form_state->getValue('username'))
       ->set('password', $form_state->getValue('password'))
       ->set('sender', $form_state->getValue('sender'))
+      ->set('sender_label', $form_state->getValue('sender_label'))
       ->set('secure', $form_state->getValue('secure'))
       ->set('port', $form_state->getValue('port'))
       ->set('is_not_smtp', $form_state->getValue('is_not_smtp'))
