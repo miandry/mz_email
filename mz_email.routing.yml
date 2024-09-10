@@ -4,4 +4,6 @@ mz_email.s_m_t_p_form:
     _form: '\Drupal\mz_email\Form\SMTPForm'
     _title: 'SMTPForm'
   requirements:
-    _access: 'TRUE'
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE
