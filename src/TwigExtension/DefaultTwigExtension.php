@@ -42,12 +42,13 @@ class DefaultTwigExtension extends \Twig_Extension {
     */
     public function getFunctions() {
       return [
-        new \Twig_SimpleFunction('mz_email',['Drupal\mz_crud\TwigExtension\DefaultTwigExtension', 'mz_email_twig']),
+        new \Twig_SimpleFunction('mz_email',['Drupal\mz_email\TwigExtension\DefaultTwigExtension', 'mz_email_twig']),
        
       ];
     }
+    // mz_email('miandrilala9@yahoo.fr','test contact','hello body <h1>GOOD </h1>');
     public static function mz_email_twig($sentTo, $subject,  $body){
-       \Drupal::service('mz_email.default')->sendMail($sentTo , $subject , $body );
+       return \Drupal::service('mz_email.default')->sendMail($sentTo , $subject , $body );
     }
    /**
     * {@inheritdoc}
