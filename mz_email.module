@@ -57,6 +57,8 @@ function mz_email_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_
   if ($form_id === 'user_pass') {
     // Add a custom validation callback.
     $form['#submit'][] = '_custom_module_password_reset_email';
+    $form['actions']['submit']['#submit'][] = 'mymodule_custom_redirect_after_password_reset';
+ 
   }
 }
 /**
@@ -74,4 +76,12 @@ function _custom_module_password_reset_email($form, \Drupal\Core\Form\FormStateI
      \Drupal::messenger()->addMessage(t('There was a problem sending the welcome email to @email.', ['@email' => $to]), 'error');
   }
   \Drupal::messenger()->addMessage(t('Password reset email has been sent to %email.', ['%email' => $to]));
+}
+/**
+ * Custom submit handler to redirect to the login page after password reset form submission.
+ */
+function mymodule_custom_redirect_after_password_reset(array &$form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  // Redirect to the user login page.
+  $form_state->setRedirect('user.login');
+  \Drupal::messenger()->addMessage(t('HELLO @email.'));
 }

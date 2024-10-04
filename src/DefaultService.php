@@ -52,7 +52,7 @@ class DefaultService {
         $mail->SMTPAuth = true;
         $mail->SMTPSecure = $config->get('secure');
         $mail->Port = $config->get('port');
-        $to = \Drupal::config('system.site')->get('mail');
+        //$to = \Drupal::config('system.site')->get('mail');
         // Sender and recipient details
         $mail->setFrom($config->get('sender'), $config->get('sender_label'));
         $mail->addAddress($config->get('sender'), $config->get('sender_label'));
@@ -134,6 +134,7 @@ public function txtForgetPass($email){
         \Drupal::messenger()->addError(t('The user %email does not exist.', ['%email' => $to]));
          return false ;
     }
+    $config = \Drupal::config('user.mail');
     $body = $config->get('password_reset.body');
     $subject = $config->get('password_reset.subject');
     
