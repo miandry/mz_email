@@ -83,7 +83,11 @@ function _custom_module_password_reset_email($form, \Drupal\Core\Form\FormStateI
 function mymodule_custom_redirect_after_password_reset(array &$form, \Drupal\Core\Form\FormStateInterface $form_state) {
   // Redirect to the user login page.
   $to = $form_state->getValue('name');
-  if ($to) {
-    $form_state->setRedirect('user.login');
+  $user_query = \Drupal::entityQuery('user')
+  ->condition('mail', $to)
+  ->range(0, 1);
+   $uids = $user_query->execute();
+  if (!empty($uids)) {
+    $form_state->setRedirect('user.login'); 
   }
 }
