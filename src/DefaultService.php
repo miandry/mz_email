@@ -3,21 +3,27 @@
 namespace Drupal\mz_email;
 
 use Drupal\user\Entity\User;
+use Drupal\Core\Database\Database;
+
 /**
  * Class DefaultService.
  */
 //require composer require phpmailer/phpmailer
 class DefaultService {
 
+
+
   /**
    * Constructs a new DefaultService object.
    */
   public function __construct() {
-
   }
   public function sendMail($sentTo , $subject , $body ){
     $config = \Drupal::config('mz_email.config');
-    
+    $duplicated = $this->duplicateAvoidEmail($sentTo,$body,$subject);
+    if($duplicated){
+       return true ;
+    }
     if(is_string($sentTo) && $config->get('is_not_smtp')){
       $headers = 'From: sender@example.com' . "\r\n" .
                  'Reply-To: sender@example.com' . "\r\n" .
@@ -31,7 +37,6 @@ class DefaultService {
       }
       return true ;
     }
-
 
     if (class_exists('PHPMailer\PHPMailer\PHPMailer')) {
        
@@ -98,6 +103,78 @@ class DefaultService {
         return false ;
     }
     return false ;
+}
+
+/**
+ * Create the sent_emails table and ensure the number of records does not exceed 10.
+ */
+function createSentEmailsTable() {
+  $schema = \Drupal::database()->schema();
+  // Check if the table already exists.
+  if (!$schema->tableExists('sent_emails')) {
+    // Create the table with necessary fields.
+    $schema->createTable('sent_emails', [
+      'fields' => [
+        'email' => [
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+        ],
+        'message_hash' => [
+          'type' => 'varchar',
+          'length' => 64,
+          'not null' => TRUE,
+        ],
+        'created' => [
+          'type' => 'int',
+          'not null' => TRUE,
+        ],
+      ],
+      'primary key' => ['email', 'message_hash'],
+    ]);
+  }
+}
+
+
+function duplicateAvoidEmail($email,$message,$subject){
+    $this->createSentEmailsTable();
+    if(is_array($email)){
+        $email = implode('', $email);
+    }
+    $message_hash = md5($message . $subject);
+    // Check if this email and message have already been sent.
+    $connection = Database::getConnection();
+    $query = $connection->select('sent_emails', 'se')
+      ->fields('se', ['email'])
+      ->condition('email', $email)
+      ->condition('message_hash', $message_hash)
+      ->execute()
+      ->fetchField();
+      if ($query) {
+        // Email has already been sent.
+        \Drupal::logger("mz_email")->error(
+            "Email  '%email' subject: @message  is already sent",
+            ['%email' => $email, '@message' => $subject]
+        );
+        return true ;
+      } else {
+        $count_query = $connection->select('sent_emails', 'se')
+            ->countQuery()
+            ->execute()
+            ->fetchField(); 
+        if ($count_query > 100) {
+            $connection->truncate('sent_emails')->execute();
+        }
+
+        $connection->insert('sent_emails')
+        ->fields([
+        'email' => $email,
+        'message_hash' => $message_hash,
+        'created' => time(),
+        ])
+        ->execute();
+        return false ;
+      }  
 }
 function verificationMail($email){
     list($user, $domain) = explode('@', $email);

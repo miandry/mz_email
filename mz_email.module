@@ -25,6 +25,28 @@ function mz_email_help($route_name, RouteMatchInterface $route_match) {
     default:
   }
 }
+function mz_email_install() {
+  \Drupal::database()->schema()->createTable('sent_emails', [
+    'fields' => [
+      'email' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ],
+      'message_hash' => [
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+      ],
+      'created' => [
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+    ],
+    'primary key' => ['email', 'message_hash'],
+  ]);
+}
+
 
 /**
  * Implements hook_user_insert().
