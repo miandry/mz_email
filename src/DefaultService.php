@@ -30,7 +30,8 @@ class DefaultService {
                  'X-Mailer: PHP/' . phpversion();
   
       if (mail($sentTo, $subject, $body, $headers)) {
-        \Drupal::messenger()->addMessage(t('Email simple sent successfully.'));
+        \Drupal::logger('mz_email')->info('Message has been sent');
+        //\Drupal::messenger()->addMessage(t('Email simple sent successfully.'));
       } else {
         \Drupal::messenger()->addMessage(t('There was a problem sending your email simple.'), 'error');
         return false;
