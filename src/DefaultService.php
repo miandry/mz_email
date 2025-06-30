@@ -91,7 +91,7 @@ class DefaultService {
             return false ;
         } else {
             \Drupal::logger('mz_email')->info('Message has been sent');
-            \Drupal::messenger()->addMessage('Email Message has been sent');  
+          //  \Drupal::messenger()->addMessage('Email Message has been sent');  
             return true ;
         } 
 

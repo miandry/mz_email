@@ -68,7 +68,6 @@ function mz_email_user_insert(UserInterface $account) {
   if ( $status !== true) {
      \Drupal::messenger()->addMessage(t('There was a problem sending the welcome email to @email.', ['@email' => $to]), 'error');
   }
-
 }
 
 /**
