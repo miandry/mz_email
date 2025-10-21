@@ -7,3 +7,20 @@ mz_email.s_m_t_p_form:
     _permission: 'access administration pages'
   options:
     _admin_route: TRUE
+mz_email.settings:
+  path: '/admin/mz_email/settings'
+  defaults:
+    _form: '\Drupal\mz_email\Form\SettingsForm'
+    _title: 'SettingsForm'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE
+
+mz_email.api_controller:
+  path: 'mz_email/send'
+  defaults:
+    _controller: '\Drupal\mz_email\Controller\ApiController::send'
+    _title: 'Send Email'
+  requirements:
+    _permission: 'access content'    

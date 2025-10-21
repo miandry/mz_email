@@ -244,4 +244,48 @@ function findUserByEmail($email) {
     return FALSE;
   }
 
+  function sendinblue_curl_send($subject,$htmlContent,$to,$sender = null) {
+    $config = \Drupal::config('mz_email.settings');
+    $apiKey =  $config->get("apiKey") ;
+    $sender_name =  $config->get("sender_name") ;
+    $sender_mail =  $config->get("sender_mail") ;
+    if($apiKey == null){
+      \Drupal::messenger()->addMessage('Please add API key here : /admin/mz_email/settings', 'error');
+       return false ;
+    }
+    $data = [
+      "sender" => [
+        "name" =>  ($sender)? $sender["name"] : $sender_name ,
+        "email" => ($sender)? $sender["sender_mail"] : $sender_mail 
+      ],
+      "to" => [[
+        "email" => $to["mail"],
+        "name" =>  $to["name"]
+      ]],
+      "subject" => $subject,
+      "htmlContent" => $htmlContent
+    ];
+  
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://api.brevo.com/v3/smtp/email");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      "api-key: $apiKey",
+      "Content-Type: application/json",
+      "accept: application/json"
+    ]);
+  
+    $response = curl_exec($ch);
+    if (curl_errno($ch)) {
+      \Drupal::logger('mz_email')->error('Erreur cURL : @err', ['@err' => curl_error($ch)]);
+      return false ;
+    } else {
+      \Drupal::logger('mz_email')->notice('Réponse Brevo : @res', ['@res' => $response]);    
+    }
+    curl_close($ch);
+    return true ;
+  }
+
 }
